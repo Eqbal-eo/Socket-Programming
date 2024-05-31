@@ -9,21 +9,29 @@ public class Server {
     public static void main(String[] args) {
         try {
             System.out.println("Waiting for clients...");
-            // Create a server socket listening on port 4999
-            ServerSocket socket = new ServerSocket(4999);
+            ServerSocket serverSocket = new ServerSocket(4999);
 
-            // Accept an incoming connection from a client
-            Socket socket2 = socket.accept();
+            Socket clientSocket = serverSocket.accept();
             System.out.println("Connection established");
 
-            // Read data from the client
-            BufferedReader userInput = new BufferedReader(new InputStreamReader(socket2.getInputStream()));
-            String str = userInput.readLine();
-            System.out.println(str);
+            BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            PrintWriter output = new PrintWriter(clientSocket.getOutputStream(), true);
 
-            // Send a response back to the client
-            PrintWriter out = new PrintWriter(socket2.getOutputStream(), true);
-            out.println("Server says: " + str);
+            String clientMessage;
+            while (true) {
+                clientMessage = input.readLine();
+                if (clientMessage.equalsIgnoreCase("exit")) {
+                    break;
+                }
+                System.out.println("Client says: " + clientMessage);
+                output.println("Server says: " + clientMessage);
+            }
+
+            System.out.println("Connection closed by client");
+            input.close();
+            output.close();
+            clientSocket.close();
+            serverSocket.close();
 
         } catch (Exception e) {
             e.printStackTrace();
