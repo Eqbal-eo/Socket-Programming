@@ -11,30 +11,21 @@ public class Client {
 
         try {
             System.out.println("Client started");
+            // Connect to the server running on localhost at port 4999
             Socket socket = new Socket(ip, port);
 
+            // Read user input from the console
             BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
-            BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter output = new PrintWriter(socket.getOutputStream(), true);
+            System.out.println("Enter a string: ");
+            String str = userInput.readLine();
 
-            String userMessage;
-            while (true) {
-                System.out.print("Enter a message (type 'exit' to quit): ");
-                userMessage = userInput.readLine();
-                output.println(userMessage);
+            // Send the input string to the server
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            out.println(str);
 
-                if (userMessage.equalsIgnoreCase("exit")) {
-                    break;
-                }
-
-                System.out.println(input.readLine());
-            }
-
-            System.out.println("Connection closed by client");
-            userInput.close();
-            input.close();
-            output.close();
-            socket.close();
+            // Read and print the server's response
+            BufferedReader Input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            System.out.println(Input.readLine());
 
         } catch (Exception e) {
             e.printStackTrace();
